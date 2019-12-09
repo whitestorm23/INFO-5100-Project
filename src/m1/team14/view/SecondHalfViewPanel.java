@@ -11,7 +11,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import m1.team14.controller.HomePageController;
 import java.beans.PropertyChangeEvent;
+import java.util.stream.Stream;
+
 import m1.team14.Events;
+import m1.team2.DealerAllContent;
 
 public class SecondHalfViewPanel extends JPanel implements IViewPanel {
 	private JScrollPane HeaderPanel,FooterPanel, MidLeftPanel, MidRightPanel;
@@ -38,8 +41,8 @@ public class SecondHalfViewPanel extends JPanel implements IViewPanel {
     newHeaderPanel();
     addMidLeftPanel();
     addMidRightPanel();
-    addComponent(ClickForDetailBtn, 4, 5, 1, 2, 0.3, 0.3);
-    addComponent(ContactMeBtn,6, 5, 2, 3, 0.3, 0.3);
+    addComponent(ClickForDetailBtn, 4, 5, 1, 2, 0.1, 0.1);
+    addComponent(ContactMeBtn, 6, 5, 2, 3, 0.1, 0.1);
     newFooterPanel();
   }
   public void addScrollPanel(JScrollPane jsp, int col, int row, int width, int height, double weightx , double weighty) {
@@ -72,7 +75,9 @@ public class SecondHalfViewPanel extends JPanel implements IViewPanel {
     FooterPanel = new JScrollPane(FootEdp,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     FootEdp.setEditable(false);
     FooterPanel.setBorder(new LineBorder(new Color(1,1,1),2,true));
-    addScrollPanel(FooterPanel, 0,9,11,2,1,1);
+    FooterPanel.setPreferredSize(new Dimension(300,50));
+    addScrollPanel(FooterPanel, 0,9,11,2,1,0.2);
+    
   }
 
   private void addMidRightPanel() {
@@ -80,7 +85,8 @@ public class SecondHalfViewPanel extends JPanel implements IViewPanel {
     MidRightPanel = new JScrollPane(Sec2Edp,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     Sec2Edp.setEditable(false);
     MidRightPanel.setBorder(new LineBorder(new Color(0,0,0),2,true));
-    addScrollPanel(MidRightPanel,4,2,6,1,3,2.5);
+    MidRightPanel.setPreferredSize(new Dimension(100,150));
+    addScrollPanel(MidRightPanel,4,2,6,1,0.6,0.6);
   }
 
   private void addMidLeftPanel() {
@@ -88,7 +94,8 @@ public class SecondHalfViewPanel extends JPanel implements IViewPanel {
     MidLeftPanel = new JScrollPane(Sec1Edp,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     Sec1Edp.setEditable(false);
     MidLeftPanel.setBorder(new LineBorder(new Color(0,0,0),2,true));
-    addScrollPanel(MidLeftPanel,0,2,2,5,3,3);
+    MidLeftPanel.setPreferredSize(new Dimension(100,150));
+    addScrollPanel(MidLeftPanel,0,2,2,5,0.4,0.6);
   }
 
   private void newHeaderPanel() {
@@ -96,7 +103,8 @@ public class SecondHalfViewPanel extends JPanel implements IViewPanel {
     HeaderPanel = new JScrollPane(HeadEdp, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     HeadEdp.setEditable(false);
     HeaderPanel.setBorder(new LineBorder(new Color(1,1,1),2,true));
-    addScrollPanel(HeaderPanel, 0,0,11,2,1,1);
+    HeaderPanel.setPreferredSize(new Dimension(300,50));
+    addScrollPanel(HeaderPanel, 0,0,11,2,1,0.2);
   }
   private void localInitialization() {
 
@@ -106,15 +114,20 @@ public class SecondHalfViewPanel extends JPanel implements IViewPanel {
   public void modelPropertyChange(final PropertyChangeEvent evt) {
     if (evt.getPropertyName().equals(Events.DEALER_ID_CHANGE)) {
       Dealer newDealer = (Dealer)evt.getNewValue();
-      List<RichText> row = controller.getRichTextsByDealer(newDealer);
+      DealerAllContent allContent = controller.getRichTextsByDealer(newDealer);
+
+
       JEditorPane[] widgets = new JEditorPane[]{HeadEdp, Sec1Edp, Sec2Edp, FootEdp};
-      if (row != null) {
-        for (int i = 0; i < widgets.length; ++i) {
-          RichText content = row.get(i);
-          widgets[i].setContentType("text/html");
-          widgets[i].setText(content == null ? "" : content.toHTMLString());
-        }
-      }
+      Stream.of(widgets).forEach(widget -> widget.setContentType("text/html"));
+
+      HeadEdp.setText(allContent.getHeader().getHtmlString());
+      Sec1Edp.setText(allContent.getLeft().getHtmlString());
+      Sec2Edp.setText(allContent.getRight().getHtmlString());
+      FootEdp.setText(allContent.getFooter().getHtmlString());
+
+
+
+
     }
   }
 }
