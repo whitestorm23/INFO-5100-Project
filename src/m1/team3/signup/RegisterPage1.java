@@ -18,20 +18,26 @@ import javax.swing.JFormattedTextField;
 import javax.swing.SwingConstants;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.awt.event.ActionEvent;
+
+import m1.DAO.DealerDAOImpl;
 import m1.team3.Dealers;
 
 public class RegisterPage1 {
 
 	private JFrame frame;
 	private JFormattedTextField formattedTextField,formattedTextField_1,formattedTextField_2,
-	formattedTextField_3,formattedTextField_4;
+	formattedTextField_3,formattedTextField_4,ImageUrl;
 	private JPasswordField formattedTextField_5,formattedTextField_6;
 	private JLabel lblname,lblDea,lblEmailAddress,Address,
-	lblContact,lblCreatePassword,lblRewritePassword,lbIMsg;
-
+	lblContact,lblCreatePassword,lblRewritePassword,lbIMsg,Image;
+	Dealer dealer = new Dealer();
 
 
 	public static void main(String[] args) {
@@ -49,26 +55,28 @@ public class RegisterPage1 {
 		panel.add(formattedTextField);
 
 	}
-	private void DealerIdText(JPanel panel) {
-		formattedTextField_1 = new JFormattedTextField();
-		formattedTextField_1.setBounds(260, 120, 282, 43);
-		panel.add(formattedTextField_1);
-	}
+
 	private void EmailText(JPanel panel) {
 		formattedTextField_2 = new JFormattedTextField();
-		formattedTextField_2.setBounds(260, 200, 282, 43);
+		formattedTextField_2.setBounds(260,120, 282, 43);
 		panel.add(formattedTextField_2);
 	}
 	private void contactText(JPanel panel) {
 		formattedTextField_3 = new JFormattedTextField();
-		formattedTextField_3.setBounds(260, 280, 282, 43);
+		formattedTextField_3.setBounds(260, 200, 282, 43);
 		panel.add(formattedTextField_3);
 	}
 	private void AddressText(JPanel panel) {
 		formattedTextField_4 = new JFormattedTextField();
-		formattedTextField_4.setBounds(260, 360, 282, 43);
+		formattedTextField_4.setBounds(260, 280, 282, 43);
 		panel.add(formattedTextField_4);
 	}
+	private void ImageText(JPanel panel) {
+		ImageUrl = new JFormattedTextField();
+		ImageUrl.setBounds(260,360, 282, 43);
+		panel.add(ImageUrl);
+	}
+
 
 	private void createPasswordText(JPanel panel) {
 		formattedTextField_5 = new JPasswordField();
@@ -85,26 +93,26 @@ public class RegisterPage1 {
 		lblname.setBounds(53, 40, 97, 43);
 		panel.add(lblname);
 	}
-	private void addDealer(JPanel panel) {
-		lblDea = new JLabel("Dealer ID:");
-		lblDea.setBounds(53, 120, 97, 43);
-		panel.add(lblDea);
-	}
-
+	
 	private void addEmailAddress(JPanel panel) {
 		lblEmailAddress = new JLabel("Email Address:");
-		lblEmailAddress.setBounds(53, 200, 151, 43);
+		lblEmailAddress.setBounds(53, 120, 151, 43);
 		panel.add(lblEmailAddress);
 	}
 	private void addContact(JPanel panel) {
-		lblContact = new JLabel("Contact");
-		lblContact.setBounds(53, 280, 97, 43);
+		lblContact = new JLabel("Contact:");
+		lblContact.setBounds(53, 200, 97, 43);
 		panel.add(lblContact);
 	}
 	private void addAddress(JPanel panel) {
 		Address = new JLabel("Address:");
-		Address.setBounds(53, 360, 97, 43);
+		Address.setBounds(53, 280, 97, 43);
 		panel.add(Address);
+	}
+	private void addImage(JPanel panel) {
+		Image = new JLabel("ImageUrl:");
+		Image.setBounds(53, 360, 97, 43);
+		panel.add(Image);
 	}
 	private void createPassword(JPanel panel) {
 		lblCreatePassword = new JLabel("Create Password");
@@ -117,7 +125,7 @@ public class RegisterPage1 {
 		panel.add(lblRewritePassword);
 	}
 	private void addlbIMsg(JPanel panel) {
-		lbIMsg = new JLabel("Warning message");
+		lbIMsg = new JLabel("");
 		lbIMsg.setBounds(53,600, 400, 43);
 		 lbIMsg.setForeground(Color.RED);
 		panel.add(lbIMsg);
@@ -135,6 +143,15 @@ public class RegisterPage1 {
 				       lbIMsg.setText("");
 				       //获取用户输入的用户名
 				       String strName = lblname.getText();
+				       String Url=ImageUrl.getText();
+				       String email=formattedTextField_2.getText();
+				       if(!isEmail(email)) {
+				    	   lbIMsg.setText("Invalid Email");
+				       }
+				       String phone=formattedTextField_3.getText();
+				       if(!IsTelephone(phone))
+				    	   lbIMsg.setText("Invalid Phone Number");
+				      
 				       if (strName==null||strName.equals("")) {
 
 				    	   Address.setText("Name cannot be emp");
@@ -161,17 +178,20 @@ public class RegisterPage1 {
 				    	   return;
 					}
 //
-
-				     Dealer dealer = new Dealer();
+				       if(lbIMsg.getText()=="") {
+				  
 				     dealer.setName(formattedTextField.getText());
-				     dealer.setId(formattedTextField_1.getText());
+				     dealer.setIconURL(ImageUrl.getText());
 				     dealer.setEmailId(formattedTextField_2.getText());
 				     dealer.setAddress(formattedTextField_4.getText());
 				     dealer.setPhone(formattedTextField_3.getText());
 				     dealer.setPassword(formattedTextField_5.getText());
-             Dealers.getInstance().add(dealer);
+				     Dealers.getInstance().add(dealer);
+				       }
 //				     这里不知道密码的怎么加
-//
+				    
+				 	 DealerDAOImpl.INSTANCE.updateDealer(dealer);
+
 
 			}
 		}
@@ -191,8 +211,6 @@ public class RegisterPage1 {
 	}
 	private void add(JPanel panel) {
 		NameText(panel);
-
-		DealerIdText(panel);
 		EmailText(panel);
 		contactText(panel);
 		AddressText(panel);
@@ -200,7 +218,6 @@ public class RegisterPage1 {
 		confirmPasswordText(panel);
 		addName(panel);
 		addEmailAddress(panel);
-		addDealer(panel);
 		addContact(panel);
 		createPassword(panel);
 		rewritePassword(panel);
@@ -208,6 +225,8 @@ public class RegisterPage1 {
 		button2(panel);
 		addAddress(panel);
 		addlbIMsg(panel);
+		addImage(panel);
+		ImageText(panel);
 	}
 	private void initialize() {
 		frame = new JFrame();
@@ -222,5 +241,20 @@ public class RegisterPage1 {
 
         panel.setBackground(Color.LIGHT_GRAY);    //background color
 	}
+	public static boolean isEmail(String email) {
+		if(!email.contains("@"))
+			return false;
+		return true;
+	
+		}
+	public static boolean IsTelephone(String str) {
+		 Pattern pattern = Pattern.compile("[0-9]{1,}");    
+		    Matcher matcher = pattern.matcher((CharSequence) str);    
+		    return matcher.matches();    
+		}
+
+	
+
+	
 
 }
