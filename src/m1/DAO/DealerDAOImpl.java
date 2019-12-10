@@ -13,8 +13,6 @@ public class DealerDAOImpl implements DealerDAO{
 
     private List<Dealer> dealers;
 
-
-
     private DealerDAOImpl() {
         dealers = new ArrayList<>();
         mockData(dealers);
@@ -25,6 +23,7 @@ public class DealerDAOImpl implements DealerDAO{
         return dealers.stream().map(this::copy).collect(Collectors.toList());
     }
     // use ret.isPresent() to check if the dealer exist;
+    @Override
     public Optional<Dealer> getDealerWithEmail(String email) {
         if (email == null) {
             return Optional.empty();
@@ -32,7 +31,15 @@ public class DealerDAOImpl implements DealerDAO{
         return dealers.stream().filter(dealer -> email.equals(dealer.getEmailId())).map(this::copy).findFirst();
     }
 
-    // return null if name not exist
+    @Override
+    public Optional<Dealer> getDealerWithPhone(String phone) {
+        if (phone == null) {
+            return Optional.empty();
+        }
+        return dealers.stream().filter(dealer -> phone.equals(dealer.getPhone())).map(this::copy).findFirst();
+    }
+
+    @Override
     public Optional<Dealer> getDealerWithName(String name) {
         if (name == null) {
             return Optional.empty();
@@ -42,6 +49,7 @@ public class DealerDAOImpl implements DealerDAO{
 
     // update or insert new dealer
     // return false if failed
+    @Override
     public boolean updateDealer(Dealer dealer) {
         Optional<Dealer> targetOption = getDealerWithName(dealer.getName());
 
