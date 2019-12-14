@@ -2,23 +2,31 @@ package m1.team14.controller;
 import java.util.List;
 import dataproto.Dealer;
 import dataproto.RichText;
+import m1.team14.model.HomePageModel;
 import m1.team2.DealerAllContent;
-import m1.team3.Dealers;
 import m1.team3.login.VMSLoginFrame;
-import m1.DBExecutor;
+import m1.DAO.DealerDAOImpl;
+import m1.DAO.DealerContentDAOImpl;
+import m4.Team4.UserUI;
+import m2.CustomerUI.FilterUI;
 // For demo///////////////////
 import javax.swing.JOptionPane;
 //////////////////////////////
 public class HomePageController extends AbstractController {
-  public Dealer getInitDealer() {
-    return Dealers.getInstance().getAllDealers().get(0);
+  private HomePageModel model;
+  public void addModel(HomePageModel model) {
+      this.model = model;
+      super.addModel(model);
   }
   public List<Dealer> getDealers() {
-    List<Dealer> ret = Dealers.getInstance().getAllDealers();
+    List<Dealer> ret = DealerDAOImpl.INSTANCE.getAllDealer();
     return ret;
   }
   public DealerAllContent getRichTextsByDealer(Dealer dealer) {
-    return DBExecutor.INSTANCE.getContent(dealer);
+    return DealerContentDAOImpl.INSTANCE.getContents(dealer);
+  }
+  public Dealer getCurrentDealer() {
+    return model.getCurrentDealer();
   }
   public void changeDealer(Dealer val) {
     try {
@@ -31,20 +39,13 @@ public class HomePageController extends AbstractController {
     new VMSLoginFrame();
   }
   public void gotoHistory() {
-    // For demo///////////////////
-    JOptionPane.showMessageDialog(null, "Go to customers' contact history enterance page");
-    //////////////////////////////
-
+    new UserUI();
   }
   public void gotoSearch() {
-    // For demo///////////////////
-    JOptionPane.showMessageDialog(null, "Go to search page");
-    //////////////////////////////
+    // new FilterUI(getCurrentDealer());
   }
   public void gotoDetail() {
-    // For demo///////////////////
-    JOptionPane.showMessageDialog(null, "Go to detail page");
-    //////////////////////////////
+    new FilterUI(getCurrentDealer());
   }
   public void contactMe() {
     // For demo///////////////////

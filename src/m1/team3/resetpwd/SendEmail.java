@@ -4,6 +4,8 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Random;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -19,10 +21,10 @@ public class SendEmail {
 
 	Container c = frame.getContentPane();
 
-	JLabel username = new JLabel("Dealer ID:       ");
+
 	JLabel email = new JLabel("Email Address: ");
 
-	JTextField field1 = new JTextField(14);
+
 	JTextField field2 = new JTextField(14);
 
 	JButton send = new JButton("send");
@@ -31,35 +33,19 @@ public class SendEmail {
 	JPanel jp2 = new JPanel();
 	JPanel jp3 = new JPanel();
 
-
-
 	public SendEmail() {
-
-
-
 		frame.setVisible(true);
         frame.setSize(400, 500);
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.setLocationRelativeTo(null);
-
-
-
 		add();
 		sendHandle();
-
-
 	}
 
 	public void add() {
-		jp1.add(username);
-		jp1.add(field1);
-
 		jp2.add(email);
 		jp2.add(field2);
-
-
 		jp3.add(send);
-
 
 		GridLayout gl = new GridLayout(3, 1);
 		c.setLayout(gl);
@@ -76,20 +62,36 @@ public class SendEmail {
         {
             public void actionPerformed(ActionEvent e)
             {
-            	sendEmail();
-                System.exit(0);
+            	sendEmail(field2.getText());
             }
         });
     }
-	public void sendEmail() {
+	public void sendEmail(String email) {
+		if (!isEmailValid(email)) {
+			System.out.println("Email is Invalid");
+			return;
+		}
+    	frame.setVisible(false); 
+    	int otp = generateOTP();
+    	new VerifyCode(otp);
+		SendEmailSMTP.sendOTP(email, otp);
+	}
+	
+	private static boolean isEmailValid(String email) {
+		String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\." + "[a-zA-Z0-9_+&*-]+)*@" + "(?:[a-zA-Z0-9-]+\\.)+[a-z"
+				+ "A-Z]{2,7}$";
 
-		//TODO
-
+		Pattern pat = Pattern.compile(emailRegex);
+		if (email == null)
+			return false;
+		return pat.matcher(email).matches();
+	}
+	
+	private static int generateOTP() {
+		return new Random().nextInt(900000) + 100000;
 	}
 
 	public static void main(String[] args) {
-
 	       new SendEmail();
-
 	}
 }

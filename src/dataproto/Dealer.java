@@ -1,5 +1,7 @@
 package dataproto;
 
+import java.util.Collection;
+
 public class Dealer extends DataObject {
   private String name;
   private String password;
@@ -12,6 +14,15 @@ public class Dealer extends DataObject {
   private String footInfoId;
   private String leftInfoId;
   private String rightInfoId;
+
+  public Dealer() {
+    
+  }
+  public Dealer(String id, String name, String password) {
+    this.setId(id);
+    this.name = name;
+    this.password = password;
+  }
 
   public String getName() {
     return name;
@@ -91,5 +102,22 @@ public class Dealer extends DataObject {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  @Override
+  public String toString() {
+    return "Dealer{" +
+            "id='" + getId() + '\'' +
+            ", name='" + name + '\'' +
+            ", password='" + password + '\'' +
+            ", address='" + address + '\'' +
+            ", phone='" + phone + '\'' +
+            ", emailId='" + emailId + '\'' +
+            ", iconURL='" + iconURL + '\'' +
+            ", headInfoId='" + headInfoId + '\'' +
+            ", footInfoId='" + footInfoId + '\'' +
+            ", leftInfoId='" + leftInfoId + '\'' +
+            ", rightInfoId='" + rightInfoId + '\'' +
+            '}';
   }
 }

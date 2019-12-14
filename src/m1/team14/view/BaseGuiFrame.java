@@ -8,6 +8,7 @@ import m1.team14.controller.AbstractController;
 public abstract class BaseGuiFrame extends JFrame {
     static final int WIDTH = 600;
     static final int HEIGHT = 800;
+    private static final long serialVersionUID = 4L;
 
     // init
     void init(AbstractController controller, JPanel view){
@@ -28,14 +29,17 @@ public abstract class BaseGuiFrame extends JFrame {
     // set the default attributes of the frame
     public void makeVisible(){
         setVisible(true);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+    public void createALL() {
+      create();
+      Container container = getContentPane();
+      add(container);
+      makeVisible();
     }
 
     public BaseGuiFrame(AbstractController controller, JPanel view){
         init(controller, view);
-        create();
-        Container container = getContentPane();
-        add(container);
-        makeVisible();
+        createALL();
     }
 }
